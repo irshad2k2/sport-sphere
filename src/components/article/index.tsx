@@ -21,6 +21,10 @@ const ArticleComponent: React.FC = () => {
   const [openModalIndex, setOpenModalIndex] = useState<number | null>(null);
   const [selectedSport, setSelectedSport] = useState<string | null>(null);
   const [userPreferences, setUserPreferences] = useState<any>(null);
+  const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+
+  console.log("Team:", selectedTeam);
+  console.log("sport", selectedSport);
 
   useEffect(() => {
     const fetchArticles = () => {
@@ -70,8 +74,13 @@ const ArticleComponent: React.FC = () => {
     setOpenModalIndex(null);
   };
 
-  const handleSportSelection = (sport: string | null) => {
+  const handleSportSelection = (
+    sport: string | null,
+    team: string | null = null
+  ) => {
     setSelectedSport(sport);
+    setSelectedTeam(team);
+
     const fetchArticles = () => {
       fetch(`${API_ENDPOINT}/articles`)
         .then((response) => {
@@ -87,13 +96,14 @@ const ArticleComponent: React.FC = () => {
           console.error("Error fetching articles:", error);
         });
     };
-    if (sport === null) {
+
+    if (sport === null || team === null) {
       fetchArticles();
     }
   };
 
   const filterArticles = (articles: Article[]) => {
-    if (!userPreferences) return articles; // Return all articles if user preferences are not fetched
+    if (!userPreferences) return articles;
 
     const preferredSports = userPreferences.sports.map(
       (sport: any) => sport.name
@@ -125,9 +135,14 @@ const ArticleComponent: React.FC = () => {
     setArticles(preferredArticles);
   };
 
-  const filteredArticles = selectedSport
-    ? articles.filter((article) => article.sport.name === selectedSport)
-    : articles;
+  const filteredArticles = articles.filter((article) => {
+    const sportMatches = !selectedSport || article.sport.name === selectedSport;
+
+    const teamMatches =
+      !selectedTeam || article.teams.some((team) => team.name === selectedTeam);
+
+    return sportMatches && teamMatches;
+  });
 
   return (
     <>
@@ -193,6 +208,34 @@ const ArticleComponent: React.FC = () => {
             Cricket
           </button>
         </div>
+
+        <div>
+          {selectedSport && (
+            <>
+              <label htmlFor="teamSelect">Select Team:</label>
+              <select
+                id="teamSelect"
+                value={selectedTeam || ""}
+                onChange={(e) => setSelectedTeam(e.target.value)}
+              >
+                <option value="">All Teams</option>
+                {articles
+                  .filter((article) => article.sport.name === selectedSport)
+                  .flatMap((article) => article.teams)
+                  .filter(
+                    (team, index, self) =>
+                      self.findIndex((t) => t.id === team.id) === index
+                  )
+                  .map((team) => (
+                    <option key={team.id} value={team.name}>
+                      {team.name}
+                    </option>
+                  ))}
+              </select>
+            </>
+          )}
+        </div>
+
         <div>
           {filteredArticles.map((article, index) => (
             <div className="m-4 flex" key={article.id}>
