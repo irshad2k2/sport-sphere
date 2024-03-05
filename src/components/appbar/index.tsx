@@ -1,5 +1,188 @@
+import { Popover, Transition } from "@headlessui/react";
+import { Fragment, useEffect, useState } from "react";
+import { API_ENDPOINT } from "../../config/constants";
+
+interface Preference {
+  name: string;
+  selected: boolean;
+}
+interface Team {
+  id: number;
+  name: string;
+  plays: string;
+}
+
 const AppBar = () => {
   const auth = localStorage.getItem("authToken");
+
+  const [sports, setSports] = useState<Preference[]>([
+    { name: "Basketball", selected: false },
+    { name: "American Football", selected: false },
+    { name: "Rugby", selected: false },
+    { name: "Field Hockey", selected: false },
+    { name: "Table Tennis", selected: false },
+    { name: "Cricket", selected: false },
+  ]);
+
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchTeamData = async () => {
+      try {
+        const response = await fetch(`${API_ENDPOINT}/teams`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch teams data");
+        }
+        const data = await response.json();
+        setTeams(data);
+      } catch (error) {
+        console.error("Error fetching teams data:", error);
+      }
+    };
+
+    const fetchUserPreferences = async () => {
+      try {
+        const response = await fetch(`${API_ENDPOINT}/user/preferences`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch user preferences");
+        }
+
+        const data = await response.json();
+        const { teams: selectedTeamsData, sports: selectedSportsData } =
+          data.preferences;
+
+        // Update selectedTeams state with the names of selected teams
+        const selectedTeamNames = selectedTeamsData.map(
+          (team: { name: string }) => team.name
+        );
+        setSelectedTeams(selectedTeamNames);
+
+        // Update sports state to mark selected sports
+        setSports((prevSports) =>
+          prevSports.map((sport) => ({
+            ...sport,
+            selected: selectedSportsData.some(
+              (selectedSport: { name: string }) =>
+                selectedSport.name === sport.name
+            ),
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching user preferences:", error);
+      }
+    };
+
+    fetchTeamData();
+    fetchUserPreferences();
+  }, []);
+
+  useEffect(() => {
+    setTeams((prevTeams) =>
+      prevTeams.map((team) => ({
+        ...team,
+        selected: selectedTeams.includes(team.name),
+      }))
+    );
+  }, [selectedTeams]);
+
+  const filteredTeams = teams.filter((team) =>
+    sports.some((sport) => sport.selected && sport.name === team.plays)
+  );
+
+  const handleTeamChange = (team: Team | string) => {
+    const teamName = typeof team === "string" ? team : team.name;
+    setSelectedTeams((prevSelectedTeams) => {
+      const isSelected = prevSelectedTeams.includes(teamName);
+      if (isSelected) {
+        const updatedTeams = prevSelectedTeams.filter(
+          (prevTeamName) => prevTeamName !== teamName
+        );
+        return updatedTeams;
+      } else {
+        const updatedTeams = [...prevSelectedTeams, teamName];
+        return updatedTeams;
+      }
+    });
+  };
+
+  const handleSportChange = (name: string) => {
+    const updatedSports = sports.map((sport) =>
+      sport.name === name ? { ...sport, selected: !sport.selected } : sport
+    );
+    setSports(updatedSports);
+  };
+
+  const renderCheckboxes = (
+    items: (Preference | Team)[],
+    onChange: (name: string) => void
+  ) => {
+    return items.map((item, index) => (
+      <div key={item.name || index}>
+        <label className="inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            checked={
+              "selected" in item
+                ? item.selected
+                : selectedTeams.includes((item as Team).name)
+            }
+            onChange={() =>
+              onChange("name" in item ? item.name : (item as Team).name)
+            }
+            className="peer"
+          />
+          <span className="my-2 text-sm font-medium text-gray-900">
+            {"name" in item ? item.name : (item as Team).name}
+          </span>
+        </label>
+        <br />
+      </div>
+    ));
+  };
+
+  const updatePreferences = async () => {
+    try {
+      const selectedSportsArray = sports
+        .filter((sport) => sport.selected)
+        .map((sport) => ({ name: sport.name }));
+      const selectedTeamsArray = teams
+        .filter((team) => selectedTeams.includes(team.name))
+        .map((team) => ({ name: team.name }));
+
+      const response = await fetch(`${API_ENDPOINT}/user/preferences`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+        body: JSON.stringify({
+          preferences: {
+            sports: selectedSportsArray,
+            teams: selectedTeamsArray,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send data to API");
+      }
+
+      console.log("Data sent to API successfully");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error sending data to API:", error);
+    }
+  };
+
+  const handleSendDataClick = () => {
+    updatePreferences();
+  };
 
   return (
     <>
@@ -54,6 +237,60 @@ const AppBar = () => {
                   >
                     Sign Up
                   </a>
+                </li>
+              )}
+              {auth && (
+                <li>
+                  <div>
+                    <Popover>
+                      {({ open }) => (
+                        <>
+                          <Popover.Button className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+                            Preferences
+                          </Popover.Button>
+                          <Transition
+                            as={Fragment}
+                            enter="transition ease-out duration-200"
+                            enterFrom="opacity-0 translate-y-1"
+                            enterTo="opacity-100 translate-y-0"
+                            leave="transition ease-in duration-150"
+                            leaveFrom="opacity-100 translate-y-0"
+                            leaveTo="opacity-0 translate-y-1"
+                          >
+                            <Popover.Panel className="absolute left-1/2 z-10 mt-3 w-screen max-w-sm -translate-x-1/2 transform px-4 sm:px-0 lg:max-w-3xl">
+                              <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black/5">
+                                <div className="relative grid gap-8 bg-white p-7 lg:grid-cols-2">
+                                  <div className="bg-gray-50 p-4">
+                                    <h1>Select Sports</h1>
+
+                                    <div className="bg-gray-50 p-4">
+                                      {renderCheckboxes(
+                                        sports,
+                                        handleSportChange
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div className="bg-gray-50 p-4">
+                                    <h1>Select Teams</h1>
+
+                                    <div className="bg-gray-50 p-4">
+                                      {renderCheckboxes(
+                                        filteredTeams,
+                                        handleTeamChange
+                                      )}
+                                    </div>
+                                  </div>
+                                  <button onClick={handleSendDataClick}>
+                                    Save Preferences
+                                  </button>
+                                </div>
+                              </div>
+                            </Popover.Panel>
+                          </Transition>
+                        </>
+                      )}
+                    </Popover>
+                  </div>
                 </li>
               )}
 

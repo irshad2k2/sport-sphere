@@ -16,25 +16,51 @@ interface Article {
 }
 
 const ArticleComponent: React.FC = () => {
+  const auth = localStorage.getItem("authToken");
   const [articles, setArticles] = useState<Article[]>([]);
   const [openModalIndex, setOpenModalIndex] = useState<number | null>(null);
   const [selectedSport, setSelectedSport] = useState<string | null>(null);
+  const [userPreferences, setUserPreferences] = useState<any>(null);
 
   useEffect(() => {
-    fetch(`${API_ENDPOINT}/articles`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch articles");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setArticles(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching articles:", error);
-      });
+    const fetchArticles = () => {
+      fetch(`${API_ENDPOINT}/articles`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch articles");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setArticles(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching articles:", error);
+        });
+    };
+
+    if (selectedSport === null) {
+      fetchArticles();
+    }
   }, []);
+
+  useEffect(() => {
+    const fetchPreferences = () => {
+      fetch(`${API_ENDPOINT}/user/preferences`, {
+        headers: {
+          Authorization: `Bearer ${auth}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setUserPreferences(data.preferences);
+        })
+        .catch((error) => {
+          console.error("Error fetching user preferences:", error);
+        });
+    };
+    fetchPreferences();
+  });
 
   const openModal = (index: number) => {
     setOpenModalIndex(index);
@@ -46,6 +72,57 @@ const ArticleComponent: React.FC = () => {
 
   const handleSportSelection = (sport: string | null) => {
     setSelectedSport(sport);
+    const fetchArticles = () => {
+      fetch(`${API_ENDPOINT}/articles`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch articles");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setArticles(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching articles:", error);
+        });
+    };
+    if (sport === null) {
+      fetchArticles();
+    }
+  };
+
+  const filterArticles = (articles: Article[]) => {
+    if (!userPreferences) return articles; // Return all articles if user preferences are not fetched
+
+    const preferredSports = userPreferences.sports.map(
+      (sport: any) => sport.name
+    );
+    const preferredTeams = userPreferences.teams.map((team: any) => team.name);
+    return articles.filter((article) => {
+      const isPreferredSport = preferredSports.includes(article.sport.name);
+      let isPreferredTeam = article.teams.some((team) =>
+        preferredTeams.includes(team.name)
+      );
+      if (preferredTeams.length == 0) {
+        if (selectedSport) {
+          return (
+            isPreferredSport &&
+            (isPreferredTeam || selectedSport === article.sport.name)
+          );
+        } else {
+          return isPreferredSport;
+        }
+      } else {
+        return isPreferredTeam;
+      }
+    });
+  };
+
+  const handlePreference = () => {
+    setSelectedSport(null);
+    const preferredArticles = filterArticles(articles);
+    setArticles(preferredArticles);
   };
 
   const filteredArticles = selectedSport
@@ -57,6 +134,15 @@ const ArticleComponent: React.FC = () => {
       <div>
         <h1>Sports News</h1>
         <div>
+          {auth && (
+            <button
+              type="button"
+              className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              onClick={() => handlePreference()}
+            >
+              Favourites
+            </button>
+          )}
           <button
             type="button"
             className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"

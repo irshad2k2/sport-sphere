@@ -9,7 +9,7 @@ interface MatchesListProps {
     sportName: string;
     endsAt: string;
     isRunning: boolean;
-    teams: { id: number; name: string}[];
+    teams: { id: number; name: string }[];
   }[];
 }
 

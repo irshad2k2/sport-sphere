@@ -24,14 +24,14 @@ const Match: React.FC<MatchProps> = ({ match }) => {
 
   const getScores = async () => {
     try {
-      setIsFetching(true); // Set fetching state to true
+      setIsFetching(true);
       const response = await fetch(`${API_ENDPOINT}/matches/${match.id}`);
       const data = await response.json();
       setScore(data.score);
     } catch (error) {
       console.error("Error fetching scores:", error);
     } finally {
-      setIsFetching(false); // Set fetching state to false regardless of success or failure
+      setIsFetching(false);
     }
   };
 
