@@ -61,9 +61,7 @@ const ArticleComponent: React.FC = () => {
             console.error("Error fetching user preferences:", error);
           });
       };
-      if (selectedSport === null) {
         fetchPreferences()
-      }
     },[auth])
   )}
 
