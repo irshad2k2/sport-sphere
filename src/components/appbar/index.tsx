@@ -91,7 +91,9 @@ const AppBar = () => {
     };
 
     fetchTeamData();
-    fetchUserPreferences();
+    {auth && (
+      fetchUserPreferences()
+    )}
   }, []);
 
   useEffect(() => {
