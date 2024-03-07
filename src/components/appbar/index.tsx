@@ -17,6 +17,9 @@ const AppBar = () => {
   const auth = localStorage.getItem("authToken");
   const { theme, setTheme } = useContext(ThemeContext);
   const [enabled, setEnabled] = useState(false);
+  
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
 
   const [sports, setSports] = useState<Preference[]>([
     { name: "Basketball", selected: false },
@@ -27,8 +30,6 @@ const AppBar = () => {
     { name: "Cricket", selected: false },
   ]);
 
-  const [teams, setTeams] = useState<Team[]>([]);
-  const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
 
   const toggleTheme = () => {
     let newTheme = "";

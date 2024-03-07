@@ -39,13 +39,6 @@ const ArticleComponent: React.FC = () => {
           console.error("Error fetching articles:", error);
         });
     };
-
-    if (selectedSport === null) {
-      fetchArticles();
-    }
-  }, []);
-
-  useEffect(() => {
     const fetchPreferences = () => {
       fetch(`${API_ENDPOINT}/user/preferences`, {
         headers: {
@@ -60,6 +53,11 @@ const ArticleComponent: React.FC = () => {
           console.error("Error fetching user preferences:", error);
         });
     };
+
+    if (selectedSport == null) {
+      fetchArticles();
+    }
+
     {
       auth && fetchPreferences();
     }
