@@ -45,26 +45,26 @@ const ArticleComponent: React.FC = () => {
     }
   }, []);
 
-  {auth && (
-    useEffect(() => {
-      const fetchPreferences = () => {
-        fetch(`${API_ENDPOINT}/user/preferences`, {
-          headers: {
-            Authorization: `Bearer ${auth}`,
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            setUserPreferences(data.preferences);
+  {
+    auth &&
+      useEffect(() => {
+        const fetchPreferences = () => {
+          fetch(`${API_ENDPOINT}/user/preferences`, {
+            headers: {
+              Authorization: `Bearer ${auth}`,
+            },
           })
-          .catch((error) => {
-            console.error("Error fetching user preferences:", error);
-          });
-      };
-        fetchPreferences()
-    },[auth])
-  )}
-
+            .then((response) => response.json())
+            .then((data) => {
+              setUserPreferences(data.preferences);
+            })
+            .catch((error) => {
+              console.error("Error fetching user preferences:", error);
+            });
+        };
+        fetchPreferences();
+      }, [auth]);
+  }
 
   const openModal = (index: number) => {
     setOpenModalIndex(index);
@@ -132,8 +132,8 @@ const ArticleComponent: React.FC = () => {
   const handlePreference = () => {
     setSelectedSport(null);
     setSelectedTeam(null);
-    const fetchPreferences = () => {
-      fetch(`${API_ENDPOINT}/user/preferences`, {
+    const fetchPreferences = async () => {
+      await fetch(`${API_ENDPOINT}/user/preferences`, {
         headers: {
           Authorization: `Bearer ${auth}`,
         },
@@ -146,7 +146,9 @@ const ArticleComponent: React.FC = () => {
           console.error("Error fetching user preferences:", error);
         });
     };
-    fetchPreferences();
+    if (selectedSport == null || selectedTeam == null) {
+      fetchPreferences();
+    }
 
     const preferredArticles = filterArticles(articles);
     setArticles(preferredArticles);
