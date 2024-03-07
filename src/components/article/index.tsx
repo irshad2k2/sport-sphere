@@ -39,29 +39,28 @@ const ArticleComponent: React.FC = () => {
           console.error("Error fetching articles:", error);
         });
     };
-    const fetchPreferences = () => {
-      fetch(`${API_ENDPOINT}/user/preferences`, {
-        headers: {
-          Authorization: `Bearer ${auth}`,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setUserPreferences(data.preferences);
-        })
-        .catch((error) => {
-          console.error("Error fetching user preferences:", error);
-        });
-    };
 
-    if (selectedSport == null) {
-      fetchArticles();
+    fetchArticles();
+    if (auth) {
+      fetchPreferences();
     }
 
-    {
-      auth && fetchPreferences();
-    }
+
   }, []);
+  const fetchPreferences = () => {
+    fetch(`${API_ENDPOINT}/user/preferences`, {
+      headers: {
+        Authorization: `Bearer ${auth}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setUserPreferences(data.preferences);
+      })
+      .catch((error) => {
+        console.error("Error fetching user preferences:", error);
+      });
+  };
 
   const openModal = (index: number) => {
     setOpenModalIndex(index);
