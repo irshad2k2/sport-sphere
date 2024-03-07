@@ -23,9 +23,6 @@ const ArticleComponent: React.FC = () => {
   const [userPreferences, setUserPreferences] = useState<any>(null);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
 
-  console.log("Team:", selectedTeam);
-  console.log("sport", selectedSport);
-
   useEffect(() => {
     const fetchArticles = () => {
       fetch(`${API_ENDPOINT}/articles`)
@@ -48,23 +45,26 @@ const ArticleComponent: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => {
-    const fetchPreferences = () => {
-      fetch(`${API_ENDPOINT}/user/preferences`, {
-        headers: {
-          Authorization: `Bearer ${auth}`,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setUserPreferences(data.preferences);
-        })
-        .catch((error) => {
-          console.error("Error fetching user preferences:", error);
-        });
-    };
-    fetchPreferences();
-  });
+  {
+    auth &&
+      useEffect(() => {
+        const fetchPreferences = () => {
+          fetch(`${API_ENDPOINT}/user/preferences`, {
+            headers: {
+              Authorization: `Bearer ${auth}`,
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              setUserPreferences(data.preferences);
+            })
+            .catch((error) => {
+              console.error("Error fetching user preferences:", error);
+            });
+        };
+        fetchPreferences();
+      });
+  }
 
   const openModal = (index: number) => {
     setOpenModalIndex(index);
@@ -212,8 +212,8 @@ const ArticleComponent: React.FC = () => {
         <div>
           {selectedSport && (
             <>
-              <label htmlFor="teamSelect">Select Team:</label>
               <select
+                className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                 id="teamSelect"
                 value={selectedTeam || ""}
                 onChange={(e) => setSelectedTeam(e.target.value)}
@@ -227,7 +227,11 @@ const ArticleComponent: React.FC = () => {
                       self.findIndex((t) => t.id === team.id) === index
                   )
                   .map((team) => (
-                    <option key={team.id} value={team.name}>
+                    <option
+                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                      key={team.id}
+                      value={team.name}
+                    >
                       {team.name}
                     </option>
                   ))}

@@ -1,6 +1,7 @@
-import { Popover, Transition } from "@headlessui/react";
-import { Fragment, useEffect, useState } from "react";
+import { Popover, Switch, Transition } from "@headlessui/react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { API_ENDPOINT } from "../../config/constants";
+import { ThemeContext } from "../../context/theme";
 
 interface Preference {
   name: string;
@@ -14,6 +15,8 @@ interface Team {
 
 const AppBar = () => {
   const auth = localStorage.getItem("authToken");
+  const { theme, setTheme } = useContext(ThemeContext);
+  const [enabled, setEnabled] = useState(false);
 
   const [sports, setSports] = useState<Preference[]>([
     { name: "Basketball", selected: false },
@@ -26,6 +29,17 @@ const AppBar = () => {
 
   const [teams, setTeams] = useState<Team[]>([]);
   const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
+
+  const toggleTheme = () => {
+    let newTheme = "";
+    if (theme === "light") {
+      newTheme = "dark";
+    } else {
+      newTheme = "light";
+    }
+    setEnabled(!enabled);
+    setTheme(newTheme);
+  };
 
   useEffect(() => {
     const fetchTeamData = async () => {
@@ -57,13 +71,11 @@ const AppBar = () => {
         const { teams: selectedTeamsData, sports: selectedSportsData } =
           data.preferences;
 
-        // Update selectedTeams state with the names of selected teams
         const selectedTeamNames = selectedTeamsData.map(
           (team: { name: string }) => team.name
         );
         setSelectedTeams(selectedTeamNames);
 
-        // Update sports state to mark selected sports
         setSports((prevSports) =>
           prevSports.map((sport) => ({
             ...sport,
@@ -309,13 +321,11 @@ const AppBar = () => {
                 <label className="inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
-                    value=""
                     className="sr-only peer"
+                    checked={!enabled}
+                    onChange={toggleTheme}
                   ></input>
                   <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                  <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                    Dark Mode
-                  </span>
                 </label>
               </li>
             </ul>
