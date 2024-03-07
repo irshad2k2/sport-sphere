@@ -1,4 +1,4 @@
-import { Popover, Switch, Transition } from "@headlessui/react";
+import { Popover, Transition } from "@headlessui/react";
 import { Fragment, useContext, useEffect, useState } from "react";
 import { API_ENDPOINT } from "../../config/constants";
 import { ThemeContext } from "../../context/theme";
