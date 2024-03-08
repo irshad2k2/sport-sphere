@@ -22,31 +22,39 @@ const ArticleComponent: React.FC = () => {
   const [selectedSport, setSelectedSport] = useState<string | null>(null);
   const [userPreferences, setUserPreferences] = useState<any>(null);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+  const [selectedFav, setSelectedFav] = useState<number>(0);
+
+  ///////////////////////////////////////////////////////////// hooks ////////////////////////////////////////////////////////
+  useEffect(() => {
+    fetchArticles();
+  }, []);
 
   useEffect(() => {
-    const fetchArticles = () => {
-      fetch(`${API_ENDPOINT}/articles`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Failed to fetch articles");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          setArticles(data);
-        })
-        .catch((error) => {
-          console.error("Error fetching articles:", error);
-        });
-    };
+    fetchPreferences();
+  }, [selectedFav]);
 
+  useEffect(() => {
     fetchArticles();
-    if (auth) {
-      fetchPreferences();
-    }
+  }, [setSelectedSport, setSelectedTeam]);
 
+  ////////////////////////////////////////////////// fetching functions ///////////////////////////////////////////////////////
 
-  }, []);
+  const fetchArticles = () => {
+    fetch(`${API_ENDPOINT}/articles`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch articles");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setArticles(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching articles:", error);
+      });
+  };
+
   const fetchPreferences = () => {
     fetch(`${API_ENDPOINT}/user/preferences`, {
       headers: {
@@ -56,19 +64,30 @@ const ArticleComponent: React.FC = () => {
       .then((response) => response.json())
       .then((data) => {
         setUserPreferences(data.preferences);
+        fetchPreferredArticles();
       })
       .catch((error) => {
         console.error("Error fetching user preferences:", error);
       });
   };
 
-  const openModal = (index: number) => {
-    setOpenModalIndex(index);
+  const fetchPreferredArticles = () => {
+    fetch(`${API_ENDPOINT}/articles`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch articles");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setArticles(filterByPreference(data));
+      })
+      .catch((error) => {
+        console.error("Error fetching articles:", error);
+      });
   };
 
-  const closeModal = () => {
-    setOpenModalIndex(null);
-  };
+  ///////////////////////////////////////////////////////// Sport Selection ///////////////////////////////////////////////
 
   const handleSportSelection = (
     sport: string | null,
@@ -77,28 +96,36 @@ const ArticleComponent: React.FC = () => {
     setSelectedSport(sport);
     setSelectedTeam(team);
 
-    const fetchArticles = () => {
-      fetch(`${API_ENDPOINT}/articles`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Failed to fetch articles");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          setArticles(data);
-        })
-        .catch((error) => {
-          console.error("Error fetching articles:", error);
-        });
-    };
-
     if (sport === null || team === null) {
       fetchArticles();
     }
   };
 
-  const filterArticles = (articles: Article[]) => {
+  const filterBySport = articles.filter((article) => {
+    const sportMatches = !selectedSport || article.sport.name === selectedSport;
+
+    const teamMatches =
+      !selectedTeam || article.teams.some((team) => team.name === selectedTeam);
+
+    return sportMatches && teamMatches;
+  });
+
+  ///////////////////////////////////////////////// Select Preference //////////////////////////////////////////////////
+
+  const handlePreference = () => {
+    setSelectedSport(null);
+    setSelectedTeam(null);
+    setArticles([]);
+    if (selectedFav == 0) {
+      setSelectedFav(1);
+    } else {
+      setSelectedFav(0);
+    }
+
+    fetchPreferences();
+  };
+
+  const filterByPreference = (articles: Article[]) => {
     if (!userPreferences) return articles;
 
     const preferredSports = userPreferences.sports.map(
@@ -125,22 +152,13 @@ const ArticleComponent: React.FC = () => {
     });
   };
 
-  const handlePreference = () => {
-    setSelectedSport(null);
-    setSelectedTeam(null);
-
-    const preferredArticles = filterArticles(articles);
-    setArticles(preferredArticles);
+  const openModal = (index: number) => {
+    setOpenModalIndex(index);
   };
 
-  const filteredArticles = articles.filter((article) => {
-    const sportMatches = !selectedSport || article.sport.name === selectedSport;
-
-    const teamMatches =
-      !selectedTeam || article.teams.some((team) => team.name === selectedTeam);
-
-    return sportMatches && teamMatches;
-  });
+  const closeModal = () => {
+    setOpenModalIndex(null);
+  };
 
   return (
     <>
@@ -239,7 +257,7 @@ const ArticleComponent: React.FC = () => {
         </div>
 
         <div>
-          {filteredArticles.map((article, index) => (
+          {filterBySport.map((article, index) => (
             <div className="m-4 flex" key={article.id}>
               <span className="basis-1/6">
                 <img src={article.thumbnail} alt={article.title} />
