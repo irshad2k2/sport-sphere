@@ -15,7 +15,7 @@ interface MatchesListProps {
 
 const MatchesList: React.FC<MatchesListProps> = ({ matches }) => {
   return (
-    <div className="flex w-full gap-2 overflow-x-scroll">
+    <div className="flex w-full gap-1 overflow-x-scroll no-scrollbar">
       {matches.map((match) => (
         <Match key={match.id} match={match}></Match>
       ))}
