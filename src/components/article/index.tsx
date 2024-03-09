@@ -30,7 +30,9 @@ const ArticleComponent: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetchPreferences();
+    if (auth) {
+      fetchPreferences();
+    }
   }, [selectedFav]);
 
   useEffect(() => {

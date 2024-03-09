@@ -17,7 +17,8 @@ const AppBar = () => {
   const auth = localStorage.getItem("authToken");
   const { theme, setTheme } = useContext(ThemeContext);
   const [enabled, setEnabled] = useState(false);
-  
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const [teams, setTeams] = useState<Team[]>([]);
   const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
 
@@ -30,7 +31,6 @@ const AppBar = () => {
     { name: "Cricket", selected: false },
   ]);
 
-
   const toggleTheme = () => {
     let newTheme = "";
     if (theme === "light") {
@@ -40,6 +40,9 @@ const AppBar = () => {
     }
     setEnabled(!enabled);
     setTheme(newTheme);
+  };
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   useEffect(() => {
@@ -56,46 +59,46 @@ const AppBar = () => {
       }
     };
 
-    const fetchUserPreferences = async () => {
-      try {
-        const response = await fetch(`${API_ENDPOINT}/user/preferences`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch user preferences");
-        }
-
-        const data = await response.json();
-        const { teams: selectedTeamsData, sports: selectedSportsData } =
-          data.preferences;
-
-        const selectedTeamNames = selectedTeamsData.map(
-          (team: { name: string }) => team.name
-        );
-        setSelectedTeams(selectedTeamNames);
-
-        setSports((prevSports) =>
-          prevSports.map((sport) => ({
-            ...sport,
-            selected: selectedSportsData.some(
-              (selectedSport: { name: string }) =>
-                selectedSport.name === sport.name
-            ),
-          }))
-        );
-      } catch (error) {
-        console.error("Error fetching user preferences:", error);
-      }
-    };
-
     fetchTeamData();
-    {auth && (
-      fetchUserPreferences()
-    )}
+    if (auth) {
+      fetchUserPreferences();
+    }
   }, []);
+
+  const fetchUserPreferences = async () => {
+    try {
+      const response = await fetch(`${API_ENDPOINT}/user/preferences`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch user preferences");
+      }
+
+      const data = await response.json();
+      const { teams: selectedTeamsData, sports: selectedSportsData } =
+        data.preferences;
+
+      const selectedTeamNames = selectedTeamsData.map(
+        (team: { name: string }) => team.name
+      );
+      setSelectedTeams(selectedTeamNames);
+
+      setSports((prevSports) =>
+        prevSports.map((sport) => ({
+          ...sport,
+          selected: selectedSportsData.some(
+            (selectedSport: { name: string }) =>
+              selectedSport.name === sport.name
+          ),
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching user preferences:", error);
+    }
+  };
 
   useEffect(() => {
     setTeams((prevTeams) =>
@@ -218,9 +221,32 @@ const AppBar = () => {
             type="button"
             className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
             aria-controls="navbar-default"
-            aria-expanded="false"
-          ></button>
-          <div className="hidden w-full md:block md:w-auto" id="navbar-default">
+            aria-expanded={isMenuOpen}
+            onClick={toggleMenu}
+          >
+            <span className="sr-only">Open main menu</span>
+            <svg
+              className="w-5 h-5"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 17 14"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M1 1h15M1 7h15M1 13h15"
+              />
+            </svg>
+          </button>
+          <div
+            className={` w-full md:block md:w-auto ${
+              isMenuOpen ? "" : "hidden"
+            }`}
+            id="navbar-default"
+          >
             <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
               <li>
                 <a
@@ -271,30 +297,37 @@ const AppBar = () => {
                           >
                             <Popover.Panel className="absolute left-1/2 z-10 mt-3 w-screen max-w-sm -translate-x-1/2 transform px-4 sm:px-0 lg:max-w-3xl">
                               <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black/5">
-                                <div className="relative grid gap-8 bg-white p-7 lg:grid-cols-2">
-                                  <div className="bg-gray-50 p-4">
-                                    <h1>Select Sports</h1>
+                                <div className="relative grid gap-8 bg-white dark:bg-gray-500 p-7 lg:grid-cols-2 rounded">
+                                  <div className="bg-gray-50 dark:bg-gray-600 p-4 rounded">
+                                    <h1 className="self-center">
+                                      Select Sports
+                                    </h1>
 
-                                    <div className="bg-gray-50 p-4">
+                                    <div className="bg-gray-50 dark:bg-gray-400 p-4 rounded">
                                       {renderCheckboxes(
                                         sports,
                                         handleSportChange
                                       )}
                                     </div>
                                   </div>
-                                  <div className="bg-gray-50 p-4">
+                                  <div className="bg-gray-50 dark:bg-gray-600 p-4 rounded">
                                     <h1>Select Teams</h1>
 
-                                    <div className="bg-gray-50 p-4">
+                                    <div className="bg-gray-50 dark:bg-gray-400 p-4 rounded">
                                       {renderCheckboxes(
                                         filteredTeams,
                                         handleTeamChange
                                       )}
                                     </div>
                                   </div>
-                                  <button onClick={handleSendDataClick}>
-                                    Save Preferences
-                                  </button>
+                                  <div className="md:col-span-2 flex justify-center">
+                                    <button
+                                      className="bg-gray-400 dark:bg-gray-800 rounded text-gray-900 dark:text-white p-2"
+                                      onClick={handleSendDataClick}
+                                    >
+                                      Save Preferences
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
                             </Popover.Panel>
@@ -318,7 +351,11 @@ const AppBar = () => {
               )}
 
               <li>
-                <label className="inline-flex items-center cursor-pointer">
+                <label
+                  className={`inline-flex mx-2 items-center cursor-pointer ${
+                    isMenuOpen ? "my-2" : ""
+                  }`}
+                >
                   <input
                     type="checkbox"
                     className="sr-only peer"
@@ -326,6 +363,7 @@ const AppBar = () => {
                     onChange={toggleTheme}
                   ></input>
                   <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  <span className="mx-2">Dark Mode</span>
                 </label>
               </li>
             </ul>
