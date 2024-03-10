@@ -258,25 +258,40 @@ const ArticleComponent: React.FC = () => {
           )}
         </div>
 
-        <div>
+        <div className="no-scrollbar overflow-y-scroll">
           {filterBySport.map((article, index) => (
-            <div className="flex md:flex-row flex-col overflow-hidden my-3 mx-2 md:min-h-60 md:max-h-60  bg-gray-100 dark:bg-gray-700 rounded" key={article.id}>
-              <span className="md:basis-2/6 min-h-60 max-h-60 overflow-hidden">
-                <img className="object-cover" src={article.thumbnail} alt={article.title} />
+            <div
+              className="flex md:flex-row flex-col overflow-hidden my-3 mx-2 p-2 md:min-h-60  md:max-h-auto bg-gray-100 dark:bg-gray-700 rounded"
+              key={article.id}
+            >
+              <span className="md:basis-4/12 basis-4/12 max-h-72 h-auto overflow-hidden rounded">
+                <img
+                  className="object-cover"
+                  src={article.thumbnail}
+                  alt={article.title}
+                />
               </span>
-              <div className="md:basis-3/6 p-5 ">
-                <h2 className="text-2xl">{article.title}</h2>
-                <p>{article.summary}</p>
-                <button
-                  type="button"
-                  onClick={() => openModal(index)}
-                  className="rounded-md bg-black/40 px-4 py-2 mt-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
-                >
-                  Read More
-                </button>
-                <p className="bg-black/10 w-fit p-1 m-1 rounded-xl ">
-                  {article.sport.name}
-                </p>
+              <div className="md:basis-7/12 basis-7/12 p-5 flex flex-col gap-2">
+                <div className="basis-3/12 ">
+                  <h2 className="text-ellipse md:text-3xl text-2xl font-bold">{article.title}</h2>
+                </div>
+                <div className="basis-6/12">
+                  <p className="text-ellipse md:text-xl text-lg">{article.summary}</p>
+                </div>
+                <div className="basis-2/12">
+                  <button
+                    type="button"
+                    onClick={() => openModal(index)}
+                    className="rounded-md bg-black/40 px-4 py-2 mt-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
+                  >
+                    Read More...
+                  </button>
+                </div>
+                <div className="basis-1/12">
+                  <p className="bg-black/10 w-fit p-1 m-1 rounded-xl ">
+                    {article.sport.name}
+                  </p>
+                </div>
               </div>
               <Transition appear show={openModalIndex === index} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={closeModal}>
