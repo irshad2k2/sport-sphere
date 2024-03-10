@@ -24,7 +24,7 @@ const ArticleComponent: React.FC = () => {
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [selectedFav, setSelectedFav] = useState<number>(0);
 
-  ///////////////////////////////////////////////////////////// hooks ////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////// hooks ////////////////////////////////////////////////////////
   useEffect(() => {
     fetchArticles();
   }, []);
@@ -260,11 +260,11 @@ const ArticleComponent: React.FC = () => {
 
         <div>
           {filterBySport.map((article, index) => (
-            <div className="m-4 flex" key={article.id}>
-              <span className="basis-1/6">
-                <img src={article.thumbnail} alt={article.title} />
+            <div className="flex md:flex-row flex-col overflow-hidden my-3 mx-2 md:min-h-60 md:max-h-60  bg-gray-100 dark:bg-gray-700 rounded" key={article.id}>
+              <span className="md:basis-2/6 min-h-60 max-h-60 overflow-hidden">
+                <img className="object-cover" src={article.thumbnail} alt={article.title} />
               </span>
-              <span className="basis-5/6 p-5 justify-end">
+              <div className="md:basis-3/6 p-5 ">
                 <h2 className="text-2xl">{article.title}</h2>
                 <p>{article.summary}</p>
                 <button
@@ -277,8 +277,7 @@ const ArticleComponent: React.FC = () => {
                 <p className="bg-black/10 w-fit p-1 m-1 rounded-xl ">
                   {article.sport.name}
                 </p>
-              </span>
-              <hr />
+              </div>
               <Transition appear show={openModalIndex === index} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={closeModal}>
                   <Transition.Child
