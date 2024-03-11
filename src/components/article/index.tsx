@@ -264,7 +264,7 @@ const ArticleComponent: React.FC = () => {
               className="flex md:flex-row flex-col my-3 mx-2 md:min-h-60  md:max-h-auto bg-gray-100 dark:bg-gray-700 rounded"
               key={article.id}
             >
-              <span className="min-h-60 max-h-80 flex md:basis-5/12 basis-4/12 rounded align-middle overflow-hidden">
+              <span className="min-h-60 max-h-80 md:basis-5/12 basis-4/12 rounded align-middle overflow-hidden">
                 <img
                   className="object-cover"
                   src={article.thumbnail}
@@ -318,7 +318,7 @@ const ArticleComponent: React.FC = () => {
                         leaveFrom="opacity-100 scale-100"
                         leaveTo="opacity-0 scale-95"
                       >
-                        <Dialog.Panel className="max-w-xl max-h-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                        <Dialog.Panel className="max-w-xl max-h-md transform overflow-hidden rounded-2xl bg-gray-300  p-6 text-left align-middle shadow-xl transition-all">
                           <h3 className="text-lg font-medium leading-6 text-gray-900">
                             {article.title}
                           </h3>
@@ -328,17 +328,17 @@ const ArticleComponent: React.FC = () => {
                               alt={article.title}
                               className="mb-4 rounded-lg"
                             />
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-900">
                               {article.summary}
                             </p>
                           </div>
                           <div className="mt-4">
                             <button
                               type="button"
-                              className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                              className="inline-flex justify-center rounded-md border border-transparent bg-blue-300 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                               onClick={closeModal}
                             >
-                              Got it, thanks!
+                              Close
                             </button>
                           </div>
                         </Dialog.Panel>
