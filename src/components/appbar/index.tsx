@@ -82,7 +82,7 @@ const AppBar = () => {
         data.preferences;
 
       const selectedTeamNames = selectedTeamsData.map(
-        (team: { name: string }) => team.name
+        (team: { name: string }) => team.name,
       );
       setSelectedTeams(selectedTeamNames);
 
@@ -91,9 +91,9 @@ const AppBar = () => {
           ...sport,
           selected: selectedSportsData.some(
             (selectedSport: { name: string }) =>
-              selectedSport.name === sport.name
+              selectedSport.name === sport.name,
           ),
-        }))
+        })),
       );
     } catch (error) {
       console.error("Error fetching user preferences:", error);
@@ -105,12 +105,12 @@ const AppBar = () => {
       prevTeams.map((team) => ({
         ...team,
         selected: selectedTeams.includes(team.name),
-      }))
+      })),
     );
   }, [selectedTeams]);
 
   const filteredTeams = teams.filter((team) =>
-    sports.some((sport) => sport.selected && sport.name === team.plays)
+    sports.some((sport) => sport.selected && sport.name === team.plays),
   );
 
   const handleTeamChange = (team: Team | string) => {
@@ -119,7 +119,7 @@ const AppBar = () => {
       const isSelected = prevSelectedTeams.includes(teamName);
       if (isSelected) {
         const updatedTeams = prevSelectedTeams.filter(
-          (prevTeamName) => prevTeamName !== teamName
+          (prevTeamName) => prevTeamName !== teamName,
         );
         return updatedTeams;
       } else {
@@ -131,14 +131,14 @@ const AppBar = () => {
 
   const handleSportChange = (name: string) => {
     const updatedSports = sports.map((sport) =>
-      sport.name === name ? { ...sport, selected: !sport.selected } : sport
+      sport.name === name ? { ...sport, selected: !sport.selected } : sport,
     );
     setSports(updatedSports);
   };
 
   const renderCheckboxes = (
     items: (Preference | Team)[],
-    onChange: (name: string) => void
+    onChange: (name: string) => void,
   ) => {
     return items.map((item, index) => (
       <div key={item.name || index}>
@@ -301,7 +301,7 @@ const AppBar = () => {
                                     <div className="bg-gray-50 dark:bg-gray-400 p-4 rounded">
                                       {renderCheckboxes(
                                         sports,
-                                        handleSportChange
+                                        handleSportChange,
                                       )}
                                     </div>
                                   </div>
@@ -311,7 +311,7 @@ const AppBar = () => {
                                     <div className="bg-gray-50 dark:bg-gray-400 p-4 rounded">
                                       {renderCheckboxes(
                                         filteredTeams,
-                                        handleTeamChange
+                                        handleTeamChange,
                                       )}
                                     </div>
                                   </div>

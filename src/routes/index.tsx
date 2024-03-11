@@ -11,20 +11,20 @@ const router = createBrowserRouter([
   },
   {
     path: "dashboard",
-    element: <Dashboard></Dashboard>
+    element: <Dashboard></Dashboard>,
   },
   {
     path: "signup",
-    element: <SignupPage></SignupPage>
+    element: <SignupPage></SignupPage>,
   },
   {
     path: "signin",
-    element: <SigninPage></SigninPage>
+    element: <SigninPage></SigninPage>,
   },
   {
     path: "logout",
-    element: <Logout></Logout>
-  }
+    element: <Logout></Logout>,
+  },
 ]);
 
 export default router;
