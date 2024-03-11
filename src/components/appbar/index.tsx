@@ -173,7 +173,7 @@ const AppBar = () => {
         .filter((team) => selectedTeams.includes(team.name))
         .map((team) => ({ name: team.name }));
 
-      const response = await fetch(`${API_ENDPOINT}/user/preferences`, {
+      await fetch(`${API_ENDPOINT}/user/preferences`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
