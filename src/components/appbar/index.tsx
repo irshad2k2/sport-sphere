@@ -186,11 +186,6 @@ const AppBar = () => {
           },
         }),
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to send data to API");
-      }
-
       console.log("Data sent to API successfully");
       window.location.reload();
     } catch (error) {
@@ -322,7 +317,7 @@ const AppBar = () => {
                                   </div>
                                   <div className="md:col-span-2 flex justify-center">
                                     <button
-                                      className="bg-gray-400 dark:bg-gray-800 rounded text-gray-900 dark:text-white p-2"
+                                      className="bg-gray-400 hover:bg-gray-500 dark:bg-gray-800 dark:hover:bg-gray-900 rounded text-gray-900 dark:text-white p-2"
                                       onClick={handleSendDataClick}
                                     >
                                       Save Preferences
