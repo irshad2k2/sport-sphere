@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { API_ENDPOINT } from "../../config/constants";
-import MatchesList from "./MatchesList";
+const MatchesList = React.lazy(() => import("./MatchesList"));
 
 interface Match {
   id: number;
@@ -96,7 +96,11 @@ const Matches: React.FC = () => {
             </svg>
             <span className="mx-2">Referesh Scores</span>
           </button>
-          <MatchesList matches={matches} />
+          <Suspense
+            fallback={<div className="suspense-loading">Loading...</div>}
+          >
+            <MatchesList matches={matches} />
+          </Suspense>
         </div>
       )}
     </div>

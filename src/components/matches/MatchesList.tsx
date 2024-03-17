@@ -1,5 +1,5 @@
 import React from "react";
-import Match from "./Match";
+const Match = React.lazy(() => import("./Match"));
 
 interface MatchesListProps {
   matches: {
