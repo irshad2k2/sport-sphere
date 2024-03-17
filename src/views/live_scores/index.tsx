@@ -1,3 +1,4 @@
+import ErrorBoundary from "../../components/ErrorBoundary";
 import Matches from "../../components/matches/Matches";
 
 const LiveScores = () => {
@@ -5,7 +6,9 @@ const LiveScores = () => {
     <>
       <div>
         <h1 className="text-5xl mx-4 my-5 text-bold">Live Scores</h1>
-        <Matches></Matches>
+        <ErrorBoundary>
+          <Matches></Matches>
+        </ErrorBoundary>
       </div>
     </>
   );
