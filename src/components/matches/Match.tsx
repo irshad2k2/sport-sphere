@@ -21,6 +21,10 @@ interface MatchProps {
 const Match: React.FC<MatchProps> = ({ match }) => {
   const [score, setScore] = useState<{ [key: string]: string }>({});
   const [isFetching, setIsFetching] = useState(false);
+  const [isFavourite, setIsFavourite] = useState<boolean>(() => {
+    const storedValue = localStorage.getItem(`match_${match.id}_favourite`);
+    return storedValue ? JSON.parse(storedValue) : false;
+  });
 
   const getScores = async () => {
     try {
@@ -33,6 +37,16 @@ const Match: React.FC<MatchProps> = ({ match }) => {
     } finally {
       setIsFetching(false);
     }
+  };
+
+  const changeFavourite = () => {
+    const newFavouriteState = !isFavourite;
+    setIsFavourite(newFavouriteState);
+    localStorage.setItem(
+      `match_${match.id}_favourite`,
+      JSON.stringify(newFavouriteState),
+    );
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -48,6 +62,71 @@ const Match: React.FC<MatchProps> = ({ match }) => {
       <div className="block max-w-sm p-4 bg-gray-100 border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-800 dark:hover:bg-gray-800">
         <div className="flex justify-between">
           <p className=" w-max font-bold text-3xl">{match.sportName}</p>
+          <button onClick={changeFavourite}>
+            {isFavourite ? (
+              <svg
+                height="30px"
+                width="30px"
+                version="1.1"
+                id="Layer_1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlnsXlink="http://www.w3.org/1999/xlink"
+                viewBox="0 0 501.28 501.28"
+                xmlSpace="preserve"
+                fill="#000000"
+              >
+                <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                <g
+                  id="SVGRepo_tracerCarrier"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                ></g>
+                <g id="SVGRepo_iconCarrier">
+                  <g>
+                    <polygon
+                      style={{ fill: "#FFDA44" }}
+                      points="501.28,194.37 335.26,159.33 250.64,12.27 250.64,419.77 405.54,489.01 387.56,320.29 "
+                    ></polygon>
+                    <polygon
+                      style={{ fill: "#FFDA44" }}
+                      points="166.02,159.33 0,194.37 113.72,320.29 95.74,489.01 250.64,419.77 250.64,12.27 "
+                    ></polygon>
+                  </g>
+                </g>
+              </svg>
+            ) : (
+              <svg
+                height="30px"
+                width="30px"
+                version="1.1"
+                id="Layer_1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlnsXlink="http://www.w3.org/1999/xlink"
+                viewBox="0 0 501.28 501.28"
+                xmlSpace="preserve"
+                fill="#000000"
+              >
+                <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                <g
+                  id="SVGRepo_tracerCarrier"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                ></g>
+                <g id="SVGRepo_iconCarrier">
+                  <g>
+                    <polygon
+                      style={{ fill: "#4b5563" }}
+                      points="501.28,194.37 335.26,159.33 250.64,12.27 250.64,419.77 405.54,489.01 387.56,320.29 "
+                    ></polygon>
+                    <polygon
+                      style={{ fill: "#4b5563" }}
+                      points="166.02,159.33 0,194.37 113.72,320.29 95.74,489.01 250.64,419.77 250.64,12.27 "
+                    ></polygon>
+                  </g>
+                </g>
+              </svg>
+            )}
+          </button>
           {match.isRunning && (
             <p className="text-red-400 rounded font-semibold text-xl">
               {match.isRunning ? "Live" : ""}
@@ -93,9 +172,6 @@ const Match: React.FC<MatchProps> = ({ match }) => {
           <p className="pb-2 text-base font-semibold">{match.location}</p>
         </div>
 
-        {/* <p className="flex w-full justify-between mb-2">
-          Ends At: {new Date(match.endsAt).toLocaleString()}
-        </p> */}
         <button className="my-2" onClick={getScores} disabled={isFetching}>
           {isFetching ? (
             <svg
@@ -139,7 +215,7 @@ const Match: React.FC<MatchProps> = ({ match }) => {
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
                 stroke="#3b90ba"
-                height={25}
+                height={30}
               >
                 <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                 <g
