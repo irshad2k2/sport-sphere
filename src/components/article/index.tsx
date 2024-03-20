@@ -23,8 +23,18 @@ const ArticleComponent: React.FC = () => {
   const [userPreferences, setUserPreferences] = useState<any>(null);
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [selectedFav, setSelectedFav] = useState<number>(0);
+  const [savedArticles, setSavedArticles] = useState<{
+    [key: number]: boolean;
+  }>({});
 
-  //////////////////////////////////////////////////////////// hooks /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////// hooks /////////////////////////////////////////////////////////////
+  useEffect(() => {
+    const savedArticlesData = JSON.parse(
+      localStorage.getItem("savedArticles") || "{}",
+    );
+    setSavedArticles(savedArticlesData);
+  }, []);
+
   useEffect(() => {
     fetchArticles();
   }, []);
@@ -162,15 +172,24 @@ const ArticleComponent: React.FC = () => {
     setOpenModalIndex(null);
   };
 
+  const handleSaveArticle = (articleId: number) => {
+    const savedArticles = JSON.parse(
+      localStorage.getItem("savedArticles") || "{}",
+    );
+    savedArticles[articleId] = !savedArticles[articleId];
+    localStorage.setItem("savedArticles", JSON.stringify(savedArticles));
+    setSavedArticles(savedArticles);
+  };
+
   return (
     <Suspense fallback={<div className="suspense-loading">Loading...</div>}>
       <>
-        <div>
-          <div className="px-2">
+        <div className="">
+          <div className="px-2 flex  overflow-x-scroll no-scrollbar">
             {auth && (
               <button
                 type="button"
-                className="text-gray-900 border border-gray-300 focus:outline-none  focus:ring-4 focus:ring-yellow-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 bg-yellow-500 dark:bg-yellow-500 dark:text-white dark:border-yellow-600 dark:hover:bg-yellow-400 hover:bg-yellow-400 dark:hover:border-yellow-600 dark:focus:ring-yellow-700"
+                className="whitespace-nowrap text-gray-900 border border-gray-300 focus:outline-none  focus:ring-4 focus:ring-yellow-100 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 bg-yellow-500 dark:bg-yellow-500 dark:text-white dark:border-yellow-600 dark:hover:bg-yellow-400 hover:bg-yellow-400 dark:hover:border-yellow-600 dark:focus:ring-yellow-700"
                 onClick={() => handlePreference()}
               >
                 Made For you
@@ -178,60 +197,60 @@ const ArticleComponent: React.FC = () => {
             )}
             <button
               type="button"
-              className=" text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
               onClick={() => handleSportSelection(null)}
             >
               All Sports
             </button>
             <button
               type="button"
-              className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              className="whitespace-nowrap text-gray-900 bg-white font-semibold border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
               onClick={() => handleSportSelection("Basketball")}
             >
               Basketball
             </button>
             <button
               type="button"
-              className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
               onClick={() => handleSportSelection("American Football")}
             >
               American Football
             </button>
             <button
               type="button"
-              className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
               onClick={() => handleSportSelection("Field Hockey")}
             >
               Field Hockey
             </button>
             <button
               type="button"
-              className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
               onClick={() => handleSportSelection("Table Tennis")}
             >
               Table Tennis
             </button>
             <button
               type="button"
-              className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
               onClick={() => handleSportSelection("Cricket")}
             >
               Cricket
             </button>
             <button
               type="button"
-              className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
               onClick={() => handleSportSelection("Rugby")}
             >
               Rugby
             </button>
           </div>
 
-          <div>
+          <div className="mx-2">
             {selectedSport && (
               <>
                 <select
-                  className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                  className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                   id="teamSelect"
                   value={selectedTeam || ""}
                   onChange={(e) => setSelectedTeam(e.target.value)}
@@ -289,17 +308,100 @@ const ArticleComponent: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => openModal(index)}
-                        className=" rounded-md bg-black/40 px-4 py-2 mt-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
+                        className=" rounded-md bg-black/40 px-4 py-2 mt-2 text-sm font-semibold text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
                       >
                         Read More
                       </button>
                     </div>
-                    <div className="basis-1/12 md:flex items-center justify-between px-4 py-2">
+
+                    <div className="basis-1/12 flex items-center justify-between px-4 py-2">
                       <p className="bg-black/10 w-fit p-1 m-1 rounded-xl ">
                         {article.sport.name}
                       </p>
+                      <button onClick={() => handleSaveArticle(article.id)}>
+                        {savedArticles[article.id] ? (
+                          <svg
+                            viewBox="-4 0 30 30"
+                            version="1.1"
+                            xmlns="http://www.w3.org/2000/svg"
+                            xmlnsXlink="http://www.w3.org/1999/xlink"
+                            fill="#000000"
+                            height={35}
+                          >
+                            <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                            <g
+                              id="SVGRepo_tracerCarrier"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            ></g>
+                            <g id="SVGRepo_iconCarrier">
+                              <title>bookmark</title>
+                              <desc>Created with Sketch Beta.</desc>
+                              <defs></defs>
+                              <g
+                                id="Page-1"
+                                stroke="none"
+                                strokeWidth="1"
+                                fill="none"
+                                fillRule="evenodd"
+                              >
+                                <g
+                                  id="Icon-Set-Filled"
+                                  transform="translate(-419.000000, -153.000000)"
+                                  fill="#000000"
+                                >
+                                  <path
+                                    d="M437,153 L423,153 C420.791,153 419,154.791 419,157 L419,179 C419,181.209 420.791,183 423,183 L430,176 L437,183 C439.209,183 441,181.209 441,179 L441,157 C441,154.791 439.209,153 437,153"
+                                    id="bookmark"
+                                  ></path>
+                                </g>
+                              </g>
+                            </g>
+                          </svg>
+                        ) : (
+                          <svg
+                            viewBox="-4 0 30 30"
+                            version="1.1"
+                            xmlns="http://www.w3.org/2000/svg"
+                            xmlnsXlink="http://www.w3.org/1999/xlink"
+                            fill="#000000"
+                            height={35}
+                          >
+                            <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                            <g
+                              id="SVGRepo_tracerCarrier"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            ></g>
+                            <g id="SVGRepo_iconCarrier">
+                              <title>bookmark</title>
+                              <desc>Created with Sketch Beta.</desc>
+                              <defs></defs>
+                              <g
+                                id="Page-1"
+                                stroke="none"
+                                strokeWidth="1"
+                                fill="none"
+                                fillRule="evenodd"
+                              >
+                                <g
+                                  id="Icon-Set"
+                                  transform="translate(-417.000000, -151.000000)"
+                                  fill="#000000"
+                                >
+                                  <path
+                                    d="M437,177 C437,178.104 436.104,179 435,179 L428,172 L421,179 C419.896,179 419,178.104 419,177 L419,155 C419,153.896 419.896,153 421,153 L435,153 C436.104,153 437,153.896 437,155 L437,177 L437,177 Z M435,151 L421,151 C418.791,151 417,152.791 417,155 L417,177 C417,179.209 418.791,181 421,181 L428,174 L435,181 C437.209,181 439,179.209 439,177 L439,155 C439,152.791 437.209,151 435,151 L435,151 Z"
+                                    id="bookmark"
+                                  ></path>
+                                </g>
+                              </g>
+                            </g>
+                          </svg>
+                        )}
+                      </button>
                     </div>
                   </div>
+
                   <Transition
                     appear
                     show={openModalIndex === index}
@@ -334,7 +436,7 @@ const ArticleComponent: React.FC = () => {
                             leaveTo="opacity-0 scale-95"
                           >
                             <Dialog.Panel className="max-w-xl max-h-md transform overflow-hidden rounded-2xl bg-gray-300  p-6 text-left align-middle shadow-xl transition-all">
-                              <h3 className="text-lg font-medium leading-6 text-gray-900">
+                              <h3 className="text-lg font-semibold leading-6 text-gray-900">
                                 {article.title}
                               </h3>
                               <div className="mt-2">
@@ -350,7 +452,7 @@ const ArticleComponent: React.FC = () => {
                               <div className="mt-4">
                                 <button
                                   type="button"
-                                  className="inline-flex justify-center rounded-md border border-transparent bg-blue-300 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                  className="inline-flex justify-center rounded-md border border-transparent bg-blue-300 px-4 py-2 text-sm font-semibold text-blue-900 hover:bg-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                                   onClick={closeModal}
                                 >
                                   Close
