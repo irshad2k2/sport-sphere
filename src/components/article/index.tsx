@@ -26,6 +26,8 @@ const ArticleComponent: React.FC = () => {
   const [savedArticles, setSavedArticles] = useState<{
     [key: number]: boolean;
   }>({});
+  const [showSavedArticles, setShowSavedArticles] = useState(false);
+  const [showAllSports, setShowAllSports] = useState(true);
 
   /////////////////////////////////////////////////////// hooks /////////////////////////////////////////////////////////////
   useEffect(() => {
@@ -113,15 +115,6 @@ const ArticleComponent: React.FC = () => {
     }
   };
 
-  const filterBySport = articles.filter((article) => {
-    const sportMatches = !selectedSport || article.sport.name === selectedSport;
-
-    const teamMatches =
-      !selectedTeam || article.teams.some((team) => team.name === selectedTeam);
-
-    return sportMatches && teamMatches;
-  });
-
   ///////////////////////////////////////////////// Select Preference ////////////////////////////////////////////////////////////
 
   const handlePreference = () => {
@@ -181,66 +174,118 @@ const ArticleComponent: React.FC = () => {
     setSavedArticles(savedArticles);
   };
 
+  const filteredArticles = showSavedArticles
+    ? articles.filter((article) => savedArticles[article.id])
+    : selectedTeam
+      ? articles.filter(
+          (article) =>
+            article.sport.name === selectedSport &&
+            article.teams.some((team) => team.name === selectedTeam),
+        )
+      : selectedSport
+        ? articles.filter((article) => article.sport.name === selectedSport)
+        : articles;
+
+  const handleShowSavedArticles = () => {
+    setShowSavedArticles(true);
+    setShowAllSports(false);
+  };
+
   return (
     <Suspense fallback={<div className="suspense-loading">Loading...</div>}>
       <>
         <div className="">
-          <div className="px-2 flex  overflow-x-scroll no-scrollbar">
+          <div className="px-2 py-2 flex  overflow-x-scroll no-scrollbar">
             {auth && (
               <button
                 type="button"
-                className="whitespace-nowrap text-gray-900 border border-gray-300 focus:outline-none  focus:ring-4 focus:ring-yellow-100 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 bg-yellow-500 dark:bg-yellow-500 dark:text-white dark:border-yellow-600 dark:hover:bg-yellow-400 hover:bg-yellow-400 dark:hover:border-yellow-600 dark:focus:ring-yellow-700"
-                onClick={() => handlePreference()}
+                className="whitespace-nowrap text-gray-900 border border-gray-300 focus:outline-none  focus:ring-4 focus:ring-yellow-300 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 bg-yellow-500 dark:bg-yellow-500 dark:text-white dark:border-yellow-600 dark:hover:bg-yellow-400 hover:bg-yellow-400 dark:hover:border-yellow-600 dark:focus:ring-yellow-700"
+                onClick={() => {
+                  handleSportSelection(null);
+                  setShowSavedArticles(false);
+                  handlePreference();
+                }}
               >
                 Made For you
               </button>
             )}
             <button
               type="button"
-              className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-              onClick={() => handleSportSelection(null)}
+              className="whitespace-nowrap text-gray-100 bg-black border border-gray-900 focus:outline-none hover:bg-gray-900 focus:ring-4 focus:ring-gray-400 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-300 dark:text-black dark:border-gray-600 dark:hover:bg-gray-400 dark:hover:border-gray-600 dark:focus:ring-gray-600"
+              onClick={() => {
+                handleSportSelection(null);
+                handleShowSavedArticles();
+              }}
+            >
+              Saved
+            </button>
+            <button
+              type="button"
+              className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              onClick={() => {
+                handleSportSelection(null);
+                setShowSavedArticles(false);
+              }}
             >
               All Sports
             </button>
             <button
               type="button"
-              className="whitespace-nowrap text-gray-900 bg-white font-semibold border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-              onClick={() => handleSportSelection("Basketball")}
+              className="whitespace-nowrap text-gray-900 bg-white font-semibold border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              onClick={() => {
+                setShowSavedArticles(false);
+                handleSportSelection("Basketball");
+              }}
             >
               Basketball
             </button>
             <button
               type="button"
-              className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-              onClick={() => handleSportSelection("American Football")}
+              className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              onClick={() => {
+                setShowSavedArticles(false);
+                handleSportSelection("American Football");
+              }}
             >
               American Football
             </button>
             <button
               type="button"
-              className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-              onClick={() => handleSportSelection("Field Hockey")}
+              className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              onClick={() => {
+                setShowSavedArticles(false);
+                handleSportSelection("Field Hockey");
+              }}
             >
               Field Hockey
             </button>
             <button
               type="button"
-              className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-              onClick={() => handleSportSelection("Table Tennis")}
+              className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              onClick={() => {
+                setShowSavedArticles(false);
+                handleSportSelection("Table Tennis");
+              }}
             >
               Table Tennis
             </button>
             <button
               type="button"
-              className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-              onClick={() => handleSportSelection("Cricket")}
+              className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              onClick={() => {
+                setShowSavedArticles(false);
+                handleSportSelection("Cricket");
+              }}
             >
               Cricket
             </button>
             <button
               type="button"
-              className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-              onClick={() => handleSportSelection("Rugby")}
+              className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              onClick={() => {
+                setShowSavedArticles(false);
+                handleSportSelection("Rugby");
+              }}
             >
               Rugby
             </button>
@@ -250,7 +295,7 @@ const ArticleComponent: React.FC = () => {
             {selectedSport && (
               <>
                 <select
-                  className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                  className="whitespace-nowrap text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-semibold rounded-lg md:text-base text-xs px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                   id="teamSelect"
                   value={selectedTeam || ""}
                   onChange={(e) => setSelectedTeam(e.target.value)}
@@ -278,10 +323,12 @@ const ArticleComponent: React.FC = () => {
           </div>
 
           <div className="no-scrollbar overflow-y-scroll">
-            {filterBySport.length === 0 ? (
-              <p>No articles for this category</p>
+            {articles.length === 0 ? (
+              <p>Loading</p>
+            ) : filteredArticles.length === 0 ? (
+              <p></p>
             ) : (
-              filterBySport.map((article, index) => (
+              filteredArticles.map((article, index) => (
                 <div
                   className="flex md:flex-row flex-col my-3 mx-2 md:min-h-60  md:max-h-auto bg-gray-100 dark:bg-gray-700 rounded"
                   key={article.id}
