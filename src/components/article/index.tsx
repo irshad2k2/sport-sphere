@@ -187,6 +187,7 @@ const ArticleComponent: React.FC = () => {
         : articles;
 
   const handleShowSavedArticles = () => {
+    showAllSports;
     setShowSavedArticles(true);
     setShowAllSports(false);
   };
