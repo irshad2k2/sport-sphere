@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { API_ENDPOINT } from "../../config/constants";
 import AppBar from "../../components/appbar";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { API_ENDPOINT } from "../../config/constants";
 
-const SigninPage: React.FC = () => {
+const PasswordPage: React.FC = () => {
+  const auth = localStorage.getItem("authToken");
+
   const navigate = useNavigate();
-
   const [_errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const {
@@ -17,9 +18,10 @@ const SigninPage: React.FC = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      const response = await fetch(`${API_ENDPOINT}/users/sign_in`, {
-        method: "POST",
+      const response = await fetch(`${API_ENDPOINT}/user/password`, {
+        method: "PATCH",
         headers: {
+          Authorization: `Bearer ${auth}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
@@ -33,22 +35,18 @@ const SigninPage: React.FC = () => {
           throw new Error("Failed to submit form");
         }
       } else {
-        const userData = await response.json();
-        localStorage.setItem("authToken", userData.auth_token);
-        localStorage.setItem("userData", JSON.stringify(userData.user));
-        navigate("/");
         console.log("Form submitted successfully");
+        navigate("/");
       }
     } catch (error: any) {
       console.error("Error submitting form:", error);
-      if (error.message.includes("Invalid email or password")) {
-        setErrorMessage("Invalid email or password");
+      if (error.message.includes("Invalid current password")) {
+        setErrorMessage("Invalid current password");
       } else {
-        setErrorMessage("An error occurred. Please try again later.");
+        setErrorMessage("Invalid Password");
       }
     }
   };
-
   return (
     <>
       <AppBar />
@@ -56,7 +54,7 @@ const SigninPage: React.FC = () => {
         <div className="max-w-md w-full space-y-8">
           <div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-              Sign in
+              Change Password
             </h2>
           </div>
           {_errorMessage && (
@@ -66,32 +64,34 @@ const SigninPage: React.FC = () => {
             <input type="hidden" name="remember" defaultValue="true" />
             <div className="rounded-md shadow-sm -space-y-px">
               <div>
-                <label htmlFor="email" className="sr-only">
-                  Email address
+                <label htmlFor="current_password" className="sr-only">
+                  Current Password
                 </label>
                 <input
-                  id="email"
-                  {...register("email", { required: true })}
-                  type="email"
-                  required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  placeholder="Email address"
-                />
-                {errors.email && (
-                  <span className="text-red-500">Email is required</span>
-                )}
-              </div>
-              <div>
-                <label htmlFor="password" className="sr-only">
-                  Password
-                </label>
-                <input
-                  id="password"
-                  {...register("password", { required: true })}
+                  id="current_password"
+                  {...register("current_password", { required: true })}
                   type="password"
                   required
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  placeholder="Password"
+                  placeholder="Current Password"
+                />
+                {errors.current_password && (
+                  <span className="text-red-500">
+                    Current password is required
+                  </span>
+                )}
+              </div>
+              <div>
+                <label htmlFor="new_password" className="sr-only">
+                  New Password
+                </label>
+                <input
+                  id="new_password"
+                  {...register("new_password", { required: true })}
+                  type="password"
+                  required
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  placeholder="New Password"
                 />
                 {errors.password && (
                   <span className="text-red-500">Password is required</span>
@@ -104,7 +104,7 @@ const SigninPage: React.FC = () => {
                 type="submit"
                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                Sign in
+                Change
               </button>
             </div>
           </form>
@@ -114,4 +114,4 @@ const SigninPage: React.FC = () => {
   );
 };
 
-export default SigninPage;
+export default PasswordPage;
