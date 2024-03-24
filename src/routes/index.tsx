@@ -4,8 +4,7 @@ const Dashboard = React.lazy(() => import("../views/dashboard"));
 const SignupPage = React.lazy(() => import("../views/signup"));
 const Logout = React.lazy(() => import("../views/logout"));
 const SigninPage = React.lazy(() => import("../views/signin"));
-// const PasswordPage = React.lazy(() => import("../views/password"));
-import PasswordPage from "../views/password";
+const PasswordPage = React.lazy(() => import("../views/password"));
 
 const router = createBrowserRouter([
   {
