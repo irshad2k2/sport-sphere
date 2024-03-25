@@ -23,10 +23,6 @@ Create an account to personalize your experience. Once signed in, users can set 
 - **Responsive Design**: Ensures seamless usability across all screen sizes, providing a consistent experience on desktop, tablet, and mobile devices.
 
 
-## Optional Features
-- Save favorite news articles and matches.
-- Implement the ability to change account passwords for added security.
-
 ## Demo Video
 [![Demo Video](https://img.youtube.com/vi/xDJ8AqTZxmw/0.jpg)](https://youtu.be/xDJ8AqTZxmw)
 
