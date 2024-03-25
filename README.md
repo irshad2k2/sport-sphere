@@ -1,32 +1,37 @@
-# React + TypeScript + Vite
+# Sports Sphere
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Welcome to Sports Sphere, an application designed to keep you updated with live scores of trending matches and the latest news articles covering all sports.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Live Score
+In the Live Score section, users can stay up-to-date with the latest scores of trending matches along with relevant information. Scores for specific matches or all matches can be manually refreshed. Additionally, users can mark specific matches as favorites for quick access.
 
-## Expanding the ESLint configuration
+![Live Score] (https://github.com/irshad2k2/sport-sphere/blob/4e06e6a2e68b543d201b3ca866f81dd54deaf91b/LiveScore.png)
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### Trending News
+Browse through news articles covering various sports in the Trending News section. Users can filter articles based on sport and team preferences. Clicking on "Read More" allows users to access the full details of each article and save their favorite articles for later reference.
 
-- Configure the top-level `parserOptions` property like this:
+[!Trending News] (https://github.com/irshad2k2/sport-sphere/blob/4e06e6a2e68b543d201b3ca866f81dd54deaf91b/TrendingNews.png)
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: "latest",
-    sourceType: "module",
-    project: ["./tsconfig.json", "./tsconfig.node.json"],
-    tsconfigRootDir: __dirname,
-  },
-};
-```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### Personalization
+Create an account to personalize your experience. Once signed in, users can set preferences to receive news articles tailored to their favorite sports and teams. Users also have the option to change their account password for added security.
 
-# sport-sphere
+### User Interface
+- **Dark Mode**: The application offers a dark mode option for comfortable viewing in various lighting conditions.
+- **Responsive Design**: Ensures seamless usability across all screen sizes, providing a consistent experience on desktop, tablet, and mobile devices.
+
+
+## Optional Features
+- Save favorite news articles and matches.
+- Implement the ability to change account passwords for added security.
+
+## Demo Video
+- [![Demo Video](https://img.youtube.com/vi/v=xDJ8AqTZxmw/0.jpg)](https://www.youtube.com/watch?v=xDJ8AqTZxmw)
+
+## Live Application
+- [Live App] (https://sport-sphere.netlify.app/)
+
+
+Enjoy using Sports Sphere for all your sports news and live score updates!
