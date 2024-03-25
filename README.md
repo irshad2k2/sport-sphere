@@ -28,10 +28,10 @@ Create an account to personalize your experience. Once signed in, users can set 
 - Implement the ability to change account passwords for added security.
 
 ## Demo Video
-- [![Demo Video](https://img.youtube.com/vi/xDJ8AqTZxmw/0.jpg)](https://www.youtube.com/watch?v=xDJ8AqTZxmw)
+[![Demo Video](https://img.youtube.com/vi/xDJ8AqTZxmw/0.jpg)](https://youtu.be/xDJ8AqTZxmw)
 
 ## Live Application
-- [Live App](https://sport-sphere.netlify.app/)
+- [Live App Link](https://sport-sphere.netlify.app/)
 
 
 Enjoy using Sports Sphere for all your sports news and live score updates!
