@@ -44,7 +44,7 @@ const Match: React.FC<MatchProps> = ({ match }) => {
     setIsFavourite(newFavouriteState);
     localStorage.setItem(
       `match_${match.id}_favourite`,
-      JSON.stringify(newFavouriteState)
+      JSON.stringify(newFavouriteState),
     );
     window.location.reload();
   };
