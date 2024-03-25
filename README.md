@@ -31,6 +31,6 @@ Create an account to personalize your experience. Once signed in, users can set 
 
 ## Live Application
 
-- [Live App Link](https://sport-sphere.netlify.app/)
+- [Live App Link](https://main--sport-sphere.netlify.app/)
 
 Enjoy using Sports Sphere for all your sports news and live score updates!
