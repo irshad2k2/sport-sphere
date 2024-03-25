@@ -32,7 +32,7 @@ const ArticleComponent: React.FC = () => {
   /////////////////////////////////////////////////////// hooks /////////////////////////////////////////////////////////////
   useEffect(() => {
     const savedArticlesData = JSON.parse(
-      localStorage.getItem("savedArticles") || "{}",
+      localStorage.getItem("savedArticles") || "{}"
     );
     setSavedArticles(savedArticlesData);
   }, []);
@@ -105,7 +105,7 @@ const ArticleComponent: React.FC = () => {
 
   const handleSportSelection = (
     sport: string | null,
-    team: string | null = null,
+    team: string | null = null
   ) => {
     setSelectedSport(sport);
     setSelectedTeam(team);
@@ -134,13 +134,13 @@ const ArticleComponent: React.FC = () => {
     if (!userPreferences) return articles;
 
     const preferredSports = userPreferences.sports.map(
-      (sport: any) => sport.name,
+      (sport: any) => sport.name
     );
     const preferredTeams = userPreferences.teams.map((team: any) => team.name);
     return articles.filter((article) => {
       const isPreferredSport = preferredSports.includes(article.sport.name);
       let isPreferredTeam = article.teams.some((team) =>
-        preferredTeams.includes(team.name),
+        preferredTeams.includes(team.name)
       );
       if (preferredTeams.length == 0) {
         if (selectedSport) {
@@ -167,7 +167,7 @@ const ArticleComponent: React.FC = () => {
 
   const handleSaveArticle = (articleId: number) => {
     const savedArticles = JSON.parse(
-      localStorage.getItem("savedArticles") || "{}",
+      localStorage.getItem("savedArticles") || "{}"
     );
     savedArticles[articleId] = !savedArticles[articleId];
     localStorage.setItem("savedArticles", JSON.stringify(savedArticles));
@@ -180,7 +180,7 @@ const ArticleComponent: React.FC = () => {
       ? articles.filter(
           (article) =>
             article.sport.name === selectedSport &&
-            article.teams.some((team) => team.name === selectedTeam),
+            article.teams.some((team) => team.name === selectedTeam)
         )
       : selectedSport
         ? articles.filter((article) => article.sport.name === selectedSport)
@@ -307,7 +307,7 @@ const ArticleComponent: React.FC = () => {
                     .flatMap((article) => article.teams)
                     .filter(
                       (team, index, self) =>
-                        self.findIndex((t) => t.id === team.id) === index,
+                        self.findIndex((t) => t.id === team.id) === index
                     )
                     .map((team) => (
                       <option

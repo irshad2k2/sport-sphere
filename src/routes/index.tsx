@@ -5,6 +5,7 @@ const SignupPage = React.lazy(() => import("../views/signup"));
 const Logout = React.lazy(() => import("../views/logout"));
 const SigninPage = React.lazy(() => import("../views/signin"));
 const PasswordPage = React.lazy(() => import("../views/password"));
+const NotFound = React.lazy(() => import("../views/notfound/NotFound"))
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
   {
     path: "logout",
     element: <Logout></Logout>,
+  },
+  {
+    path: "*",
+    element: <NotFound />
   },
 ]);
 
